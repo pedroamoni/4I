@@ -1,0 +1,14 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var AOI = ee.FeatureCollection("users/pedroamoni/AOI"),
+    imageCollection = ee.ImageCollection("LANDSAT/LO08/C01/T1");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+
+Map.addLayer(AOI);
+Map.setCenter(-55.5281106696126,-12.941796847390972,10);
+
+var OLI = ee.ImageCollection('LANDSAT/LO08/C01/T1');
+Map.addLayer(OLI);
+
+
+
