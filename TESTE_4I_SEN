@@ -1,0 +1,19 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var AOI = ee.FeatureCollection("users/pedroamoni/AOI"),
+    imageCollection = ee.ImageCollection("LANDSAT/LC08/C01/T1_RT_TOA");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+
+Map.addLayer(AOI, {color:'red'});
+Map.setCenter(-55.5281106696126,-12.941796847390972,12);
+
+var OLI = ee.ImageCollection('LANDSAT/LC08/C01/T1_RT_TOA')
+          .filterMetadata('CLOUD_COVER', 'less_than', 5)
+          .filterDate('2020-01-01','2020-06-30');
+
+Map.addLayer(OLI, {bands:'B6,B5,B4'});          
+
+
+
+
+
