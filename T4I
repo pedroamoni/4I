@@ -1,8 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var table = ee.FeatureCollection("users/pedroamoni/AOI");
+var AOI = ee.FeatureCollection("users/pedroamoni/AOI");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var AOI = users/pedroamoni/AOI
-
 // Create image collection of S-2 imagery for the perdiod 2016-2018
 var S2 = ee.ImageCollection('COPERNICUS/S2')
 
