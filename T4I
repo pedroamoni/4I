@@ -47,3 +47,6 @@ print(plotNDVI);
 
 // Display NDVI results on map
 Map.addLayer(NDVImed.clip(geometry), {min:-0.5, max:1.5, palette: ndvi_pal}, 'NDVI');
+
+//Display RGB results on map
+Map.addLayer
