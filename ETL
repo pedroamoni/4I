@@ -1,0 +1,5 @@
+imagem = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')\
+  .filterDate('2019-01-01','2020-01-01')\
+  .filterBounds(ee.Geometry.Point(-49.459937, -28.5919285))
+ 
+print("Quantidade de Imagens: ", imagem.size().getInfo())
