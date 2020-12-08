@@ -33,8 +33,7 @@ var NDVI = S2.select(['nd']);
 var NDVImed = NDVI.median(); //I just changed the name of this variable ;)
 
 // Create palettes for display of NDVI
-var ndvi_pal = ['#d73027', '#f46d43', '#fdae61', '#fee08b', '#d9ef8b',
-'#a6d96a'];
+var ndvi_pal = ['#640000', '#ff0000', '#ffff00', '#00c800', '#006400'];
 
 // Create a time series chart.
 var plotNDVI = ui.Chart.image.seriesByRegion(S2, geometry,ee.Reducer.mean(),
