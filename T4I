@@ -7,7 +7,7 @@ var geometry = AOI
 var S2 = ee.ImageCollection('COPERNICUS/S2')
 
 //filter start and end date
-.filterDate('2020-02-05', '2020-02-10')
+.filterDate('2020-02-15', '2020-02-17')
 
 //filter according to drawn boundary
 .filterBounds(geometry);
