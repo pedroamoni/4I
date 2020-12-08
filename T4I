@@ -7,7 +7,7 @@ var geometry = AOI
 var S2 = ee.ImageCollection('COPERNICUS/S2')
 
 //filter start and end date
-.filterDate('2020-05-01', '2020-05-30')
+.filterDate('2020-06-01', '2020-06-30')
 
 //filter according to drawn boundary
 .filterBounds(geometry);
@@ -15,8 +15,8 @@ var S2 = ee.ImageCollection('COPERNICUS/S2')
 // Function to mask cloud from built-in quality band
 // information on cloud
 var maskcloud1 = function(image) {
-var QA60 = image.select(['QA60']);
-return image.updateMask(QA60.lt(1));
+var QA10 = image.select(['QA10']);
+return image.updateMask(QA10.lt(1));
 };
 
 // Function to calculate and add an NDVI band
@@ -51,21 +51,7 @@ Map.addLayer(NDVImed.clip(geometry), {min:-0.5, max:1.5, palette: ndvi_pal}, 'ND
 
 
 //Display RGB results on map
-var collection = ee.ImageCollection('COPERNICUS/S2') // searches all sentinel 2 imagery pixels...
-  .filter(ee.Filter.lt("CLOUDY_PIXEL_PERCENTAGE", 10)) // ...filters on the metadata for pixels less than 10% cloud
-  .filterDate('2020-04-01' ,'2020-04-30') //... chooses only pixels between the dates you define here
-  .filterBounds(AOI) // ... that are within your aoi
-  
-print(collection) // this generates a JSON list of the images (and their metadata) which the filters found in the right-hand window.
-  
-// Function to mask cloud from built-in quality band
-// information on cloud
-var maskcloud2 = function(image2) {
-var QA70 = image.select(['QA70']);
-return image2.updateMask(QA70.lt(1));
-};
-
-/// so far this is finding all the images in the collection which meets the critera- the latest on top. To get a nice blended-looking mosaic, 
+// so far this is finding all the images in the collection which meets the critera- the latest on top. To get a nice blended-looking mosaic, 
 // try some of the tools for 'reducing' these to one pixel (or bands of pixels in a layer stack). 
 
 var medianpixels = S2.median() // This finds the median value of all the pixels which meet the criteria. 
@@ -75,6 +61,6 @@ var medianpixelsclipped = medianpixels.clip(AOI).divide(10000) // this cuts up t
 
 
 // Now visualise the mosaic as a natural colour image. 
-Map.addLayer(medianpixelsclipped, {bands: ['B4', 'B3', 'B2'], min: 0, max: 1, gamma: 2.5}, 'RGB')
+Map.addLayer(medianpixelsclipped, {bands: ['B4', 'B3', 'B2'], min: 0, max: 1, gamma: 3}, 'RGB')
 
 
