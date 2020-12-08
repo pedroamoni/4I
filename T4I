@@ -1,6 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var AOI = ee.FeatureCollection("users/pedroamoni/AOI"),
-    S2 = ee.ImageCollection("COPERNICUS/S2");
+var AOI = ee.FeatureCollection("users/pedroamoni/AOI");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var geometry = AOI
 
@@ -8,7 +7,7 @@ var geometry = AOI
 var S2 = ee.ImageCollection('COPERNICUS/S2')
 
 //filter start and end date
-.filterDate('2020-06-01', '2020-06-30')
+.filterDate('2020-02-05', '2020-02-10')
 
 //filter according to drawn boundary
 .filterBounds(geometry);
@@ -52,8 +51,6 @@ Map.addLayer(NDVImed.clip(geometry), {min:-0.5, max:1.5, palette: ndvi_pal}, 'ND
 
 
 //Display RGB results on map
-// so far this is finding all the images in the collection which meets the critera- the latest on top. To get a nice blended-looking mosaic, 
-// try some of the tools for 'reducing' these to one pixel (or bands of pixels in a layer stack). 
 // This finds the median value of all the pixels which meet the criteria.
 var medianpixels = S2.median()  
 
