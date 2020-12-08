@@ -1,11 +1,15 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var AOI = ee.FeatureCollection("users/pedroamoni/AOI");
+var AOI = ee.FeatureCollection("users/pedroamoni/AOI"),
+    imageVisParam = {"opacity":0.99,"bands":["nd"],"min":-0.5,"max":0.9,"gamma":0.927};
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+var geometry = AOI
+
+
 // Create image collection of S-2 imagery for the perdiod 2016-2018
 var S2 = ee.ImageCollection('COPERNICUS/S2')
 
 //filter start and end date
-.filterDate('2018-09-01', '2018-10-31')
+.filterDate('2020-01-01', '2020-06-30')
 
 //filter according to drawn boundary
 .filterBounds(geometry);
