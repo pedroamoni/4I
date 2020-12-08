@@ -1,5 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var AOI = ee.FeatureCollection("users/pedroamoni/AOI");
+var AOI = ee.FeatureCollection("users/pedroamoni/AOI"),
+    S2 = ee.ImageCollection("COPERNICUS/S2");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var geometry = AOI
 
@@ -53,14 +54,19 @@ Map.addLayer(NDVImed.clip(geometry), {min:-0.5, max:1.5, palette: ndvi_pal}, 'ND
 //Display RGB results on map
 // so far this is finding all the images in the collection which meets the critera- the latest on top. To get a nice blended-looking mosaic, 
 // try some of the tools for 'reducing' these to one pixel (or bands of pixels in a layer stack). 
+// This finds the median value of all the pixels which meet the criteria.
+var medianpixels = S2.median()  
 
-var medianpixels = S2.median() // This finds the median value of all the pixels which meet the criteria. 
-
-var medianpixelsclipped = medianpixels.clip(AOI).divide(10000) // this cuts up the result so that it fits neatly into your aoi
-                                                                  // and divides so that values between 0 and 1      
+// this cuts up the result so that it fits neatly into your aoi
+// and divides so that values between 0 and 1 
+var medianpixelsclipped = medianpixels.clip(AOI).divide(10000) 
 
 
 // Now visualise the mosaic as a natural colour image. 
 Map.addLayer(medianpixelsclipped, {bands: ['B4', 'B3', 'B2'], min: 0, max: 1, gamma: 3}, 'RGB')
+
+
+
+
 
 
