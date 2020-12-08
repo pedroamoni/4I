@@ -68,7 +68,7 @@ return image2.updateMask(QA70.lt(1));
 /// so far this is finding all the images in the collection which meets the critera- the latest on top. To get a nice blended-looking mosaic, 
 // try some of the tools for 'reducing' these to one pixel (or bands of pixels in a layer stack). 
 
-var medianpixels = collection.median() // This finds the median value of all the pixels which meet the criteria. 
+var medianpixels = S2.median() // This finds the median value of all the pixels which meet the criteria. 
 
 var medianpixelsclipped = medianpixels.clip(AOI).divide(10000) // this cuts up the result so that it fits neatly into your aoi
                                                                   // and divides so that values between 0 and 1      
