@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var AOI = ee.FeatureCollection("users/pedroamoni/AOI");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
 var geometry = AOI
 Map.setCenter(-55.52921735575856,-12.940544989159335,12)
 
@@ -9,7 +10,7 @@ var S2 = ee.ImageCollection('COPERNICUS/S2')
 
 // Filtra a data das imagens a serem analisadas
 // Utilizar ANO-MÊS-DIA
-.filterDate('2020-06-01', '2020-06-30')
+.filterDate('2020-05-01', '2020-06-30')
 
 // Filtra e clipa a imagem de acordo com a AOI
 .filterBounds(geometry);
@@ -58,8 +59,10 @@ var medianpixelsclipped = medianpixels.clip(AOI).divide(10000)
 // Apresenta o resultado RGB no mapa
 Map.addLayer(medianpixelsclipped, {bands: ['B4', 'B3', 'B2'], min: 0, max: 1, gamma: 3}, 'RGB')
 
+// Make an Array Image, with a 1-D Array per pixel.
+var arrayImage1D = NDVI.toArray();
 
-
+print(arrayImage1D)
 
 
 
