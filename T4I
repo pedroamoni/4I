@@ -63,12 +63,16 @@ var medianpixelsclipped = medianpixels.clip(AOI).divide(10000)
 // Now visualise the mosaic as a natural colour image. 
 Map.addLayer(medianpixelsclipped, {bands: ['B4', 'B3', 'B2'], min: 0, max: 1, gamma: 3}, 'RGB')
 
-// Export the image, specifying scale and region.
+// Export a cloud-optimized GeoTIFF.
 Export.image.toDrive({
-  image: NDVI, RGB
-  description: 'imageToDriveExample',
+  image: NDVI,
+  description: 'imageToCOGeoTiffExample',
   scale: 30,
-  region: geometry
+  region: geometry,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
 });
 
 
