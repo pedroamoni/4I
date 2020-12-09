@@ -1,7 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var AOI = ee.FeatureCollection("users/pedroamoni/AOI");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-
+var geometry = AOI
 
 imagem = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')\
   .filterDate('2019-01-01','2020-01-01')\
