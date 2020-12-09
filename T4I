@@ -2,7 +2,7 @@
 var AOI = ee.FeatureCollection("users/pedroamoni/AOI");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var geometry = AOI
-map.setCenter(-55.52921735575856,-12.940544989159335)
+Map.setCenter(-55.52921735575856,-12.940544989159335)
 
 // Create image collection of S-2 imagery for the perdiod 2016-2018
 var S2 = ee.ImageCollection('COPERNICUS/S2')
