@@ -75,7 +75,7 @@ Export.image.toDrive({
   }
 });
 
-
+ee.batch.Export.image.toDrive(image=NDVI)
 
 
 
