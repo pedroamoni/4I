@@ -8,7 +8,7 @@ Map.setCenter(-55.52921735575856,-12.940544989159335)
 var S2 = ee.ImageCollection('COPERNICUS/S2')
 
 //filter start and end date
-.filterDate('2020-06-29', '2020-06-30')
+.filterDate('2020-06-01', '2020-06-30')
 
 //filter according to drawn boundary
 .filterBounds(geometry);
@@ -65,7 +65,7 @@ Map.addLayer(medianpixelsclipped, {bands: ['B4', 'B3', 'B2'], min: 0, max: 1, ga
 
 // Export the image, specifying scale and region.
 Export.image.toDrive({
-  image: NDVI,
+  image: NDVI, RGB
   description: 'imageToDriveExample',
   scale: 30,
   region: geometry
