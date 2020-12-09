@@ -43,24 +43,19 @@ var plotNDVI = ui.Chart.image.seriesByRegion(S2, geometry,ee.Reducer.mean(),
                 vAxis: {title: 'NDVI'}
 });
 
-// Display.
+// Plota o gráfico da média de NDVI.
 print(plotNDVI);
 
-// Display NDVI results on map
+// Apresenta o resultado NDVI no mapa
 Map.addLayer(NDVImed.clip(geometry), {min:-0.5, max:1.5, palette: ndvi_pal}, 'NDVI');
 
-
-
-//Display RGB results on map
-// This finds the median value of all the pixels which meet the criteria.
-var medianpixels = S2.median()  
-
-// this cuts up the result so that it fits neatly into your aoi
-// and divides so that values between 0 and 1 
+// Calcula a média dos pixels das imagens do período selecionado para compor a imagem RGB 
+var medianpixels = S2.median() 
+ 
+// Clipa a imagem RGB com a AOI
 var medianpixelsclipped = medianpixels.clip(AOI).divide(10000) 
 
-
-// Now visualise the mosaic as a natural colour image. 
+// Apresenta o resultado RGB no mapa
 Map.addLayer(medianpixelsclipped, {bands: ['B4', 'B3', 'B2'], min: 0, max: 1, gamma: 3}, 'RGB')
 
 
