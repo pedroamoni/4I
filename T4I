@@ -8,7 +8,7 @@ Map.setCenter(-55.52921735575856,-12.940544989159335)
 var S2 = ee.ImageCollection('COPERNICUS/S2')
 
 //filter start and end date
-.filterDate('2020-02-01', '2020-03-30')
+.filterDate('2020-03-01', '2020-03-30')
 
 //filter according to drawn boundary
 .filterBounds(geometry);
