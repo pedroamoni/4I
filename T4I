@@ -4,42 +4,42 @@ var AOI = ee.FeatureCollection("users/pedroamoni/AOI");
 var geometry = AOI
 Map.setCenter(-55.52921735575856,-12.940544989159335,12)
 
-// Create image collection of S-2 imagery for the perdiod 2016-2018
+// Adiciona uma coleção de imagens Sentinel 2
 var S2 = ee.ImageCollection('COPERNICUS/S2')
 
-//filter start and end date
+// Filtra a data das imagens a serem analisadas
+// Utilizar ANO-MÊS-DIA
 .filterDate('2020-06-01', '2020-06-30')
 
-//filter according to drawn boundary
+// Filtra e clipa a imagem de acordo com a AOI
 .filterBounds(geometry);
 
-// Function to mask cloud from built-in quality band
-// information on cloud
+// Função para limpar imagens com nuvens 
 var maskcloud1 = function(image) {
 var QA10 = image.select(['QA10']);
 return image.updateMask(QA10.lt(1));
 };
 
-// Function to calculate and add an NDVI band
+// Função para calcular o NDVI
 var addNDVI = function(image) {
 return image.addBands(image.normalizedDifference(['B8', 'B4']));
 };
 
-// Add NDVI band to image collection
+// Adiciona a banda NDVI a coleção de imagem
 var S2 = S2.map(addNDVI);
-// Extract NDVI band and create NDVI median composite image
+// Cria a média da banda NDVI
 var NDVI = S2.select(['nd']);
-var NDVImed = NDVI.median(); //I just changed the name of this variable ;)
+var NDVImed = NDVI.median();
 
-// Create palettes for display of NDVI
+// Cria a paleta de cores aplicada a imagem NDVI
 var ndvi_pal = ['#640000', '#ff0000', '#ffff00', '#00c800', '#006400'];
 
-// Create a time series chart.
+// Cria gráfico de séries
 var plotNDVI = ui.Chart.image.seriesByRegion(S2, geometry,ee.Reducer.mean(),
 'nd',500,'system:time_start', 'system:index')
               .setChartType('LineChart').setOptions({
-                title: 'NDVI short-term time series',
-                hAxis: {title: 'Date'},
+                title: 'Série NDVI',
+                hAxis: {title: 'Data'},
                 vAxis: {title: 'NDVI'}
 });
 
