@@ -1,0 +1,192 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var AOI = ee.FeatureCollection("users/pedroamoni/AOI");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+var geometry = AOI
+Map.setCenter(-55.52921735575856,-12.940544989159335,13)
+
+// Adiciona uma coleção de imagens Sentinel 2.
+var S2 = ee.ImageCollection('COPERNICUS/S2')
+
+// Filtra a data das imagens a serem analisadas.
+// Utilizar ANO-MÊS-DIA.
+.filterDate('2020-02-01', '2020-06-30')
+
+// Filtra e clipa a imagem de acordo com a AOI.
+.filterBounds(geometry);
+
+// Função para limpar imagens com nuvens. 
+var maskcloud1 = function(image) {
+var QA10 = image.select(['QA10']);
+return image.updateMask(QA10.lt(1));
+};
+
+// Função para calcular o NDVI.
+var addNDVI = function(image) {
+return image.addBands(image.normalizedDifference(['B8', 'B4']));
+};
+
+// Adiciona a banda NDVI a coleção de imagem
+var S2 = S2.map(addNDVI);
+// Cria a média da banda NDVI
+var NDVI = S2.select(['nd']);
+var NDVImed = NDVI.median();
+
+// Cria a paleta de cores aplicada a imagem NDVI
+var ndvi_pal = ['#640000', '#ff0000', '#ffff00', '#00c800', '#006400'];
+
+// Apresenta o resultado NDVI no mapa
+Map.addLayer(NDVImed.clip(geometry), {min:-0.5, max:1.5, palette: ndvi_pal}, 'NDVI');
+
+// Cria composição RGB.
+var RGB = S2.select(['B4', 'B3', 'B2']);
+var RGBmed = RGB.median();
+
+// Calcula a média dos pixels das imagens do período selecionado para compor a imagem RGB 
+var medianpixels = S2.median() 
+ 
+// Clipa a imagem RGB com a AOI
+var medianpixelsclipped = medianpixels.clip(AOI).divide(10000) 
+
+// Apresenta o resultado RGB no mapa
+Map.addLayer(medianpixelsclipped, {bands: ['B4', 'B3', 'B2'], min: 0, max: 1, gamma: 3}, 'RGB')
+
+
+
+// Cria gráficos
+
+// Cria o painel de gráficos.
+var panel = ui.Panel();
+panel.style().set('width', '500px');
+
+// Interface gráfica do painel de gráficos.
+var intro = ui.Panel([
+ui.Label({
+value: 'Painel Analítico',
+style: {fontSize: '20px', fontWeight: 'bold'}
+}),
+ui.Label('Clique no mapa para coletar uma amostra.')
+]);
+panel.add(intro);
+
+// Cria as caixas de Laitude e Logintude.
+var lon = ui.Label();
+var lat = ui.Label();
+panel.add(ui.Panel([lon, lat], ui.Panel.Layout.flow('horizontal')));
+
+// Cria a função de registrar as coordenadas coletadas no mapa.
+Map.onClick(function(coords) {
+// Update the lon/lat panel with values from the click event.
+lon.setValue('lon: ' + coords.lon.toFixed(2)),
+lat.setValue('lat: ' + coords.lat.toFixed(2));
+
+// Adciona um ponto preto no mapa para marcar a área da amostra.
+var point = ee.Geometry.Point(coords.lon, coords.lat);
+var dot = ui.Map.Layer(point, {color: 'green'});
+Map.layers().set(2, dot);
+
+// Create an NDVI chart.
+var ndviChart = ui.Chart.image.series(NDVI, point, ee.Reducer.mean(), 500);
+ndviChart.setOptions({
+title: 'NDVI Over Time',
+vAxis: {title: 'NDVI'},
+hAxis: {title: 'date', format: 'MM-yy', gridlines: {count: 7}},
+});
+panel.widgets().set(2, ndviChart);
+
+// Create an RGB spectrum chart.
+var rgbChart = ui.Chart.image.series(RGB, point)
+.setOptions({
+title: 'RGB Reflectance Over Time',
+vAxis: {title: 'band value'},
+hAxis: {title: 'date', format: 'MM-yy', gridlines: {count: 7}},
+});
+panel.widgets().set(3, rgbChart);
+});
+
+Map.style().set('cursor', 'crosshair');
+
+// Add the panel to the ui.root.
+ui.root.insert(0, panel);
+
+//Gráficos de reflectância Fixos
+
+var COLOR = {
+SOLO: 'red',
+VEGETACAO: 'black'
+};
+
+// Locais fixos de analise de amostras (na data de:XXXXX).
+var soloExposto = ee.Feature(
+    ee.Geometry.Point(-55.5317110503568,-12.922977090798286), {'label': 'Solo Exposto'});
+var areaPlantada = ee.Feature(
+    ee.Geometry.Point(-55.52648686586375,-12.97995212157049), {'label': 'Vegetação'});
+
+var sorrisoPoints = ee.FeatureCollection([soloExposto, areaPlantada]);
+S2 = S2.filterBounds(sorrisoPoints);
+
+var sorrisoImage = ee.Image(S2.first());
+
+// Select bands B1 to B7.
+sorrisoImage = sorrisoImage.select(['B2', 'B3', 'B4', 'B8']);
+
+//Mostra o gráfico de relevância espectral por banda de um ponto fixo de solo exposto e área plantada.
+var bandChart = ui.Chart.image.regions({
+image: sorrisoImage,
+regions: sorrisoPoints,
+scale: 30,
+seriesProperty: 'label'
+});
+bandChart.setChartType('LineChart');
+bandChart.setOptions({
+title: 'Valor de relevância por banda - Assinatura espectral',
+hAxis: {
+title: 'Banda'
+},
+vAxis: {
+title: 'Reflectância'
+},
+lineWidth: 1,
+pointSize: 4,
+series: {
+0: {color: COLOR.SOLO},
+1: {color: COLOR.VEGETACAO}
+}
+});
+
+
+// Comprimento de ondas Sentinel 2A.
+var wavelengths = [.49, .56, .66, .84];
+
+//Mostra o gráfico de comportamento espectral de um ponto fixo de solo exposto e área plantada.
+var spectraChart = ui.Chart.image.regions({
+image: sorrisoImage,
+regions: sorrisoPoints,
+scale: 20,
+seriesProperty: 'label',
+xLabels: wavelengths
+});
+
+spectraChart.setChartType('LineChart');
+spectraChart.setOptions({
+title: 'Assinatura espectral',
+hAxis: {
+title: 'Comprimento de onda (micrometros)'
+},
+vAxis: {
+title: 'Reflectância'
+  },
+lineWidth: 1,
+pointSize: 4,
+series: {
+0: {color: COLOR.SOLO},
+1: {color: COLOR.VEGETACAO}
+}
+});
+
+
+print(bandChart);
+print(spectraChart);
+
+Map.addLayer(soloExposto, {color: COLOR.SOLO});
+Map.addLayer(areaPlantada, {color: COLOR.VEGETACAO});
